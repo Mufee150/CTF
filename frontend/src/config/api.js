@@ -5,7 +5,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL ||
                       'http://localhost:5000' : 
                       'https://webhunt-l677.onrender.com/');
 
-export { API_BASE_URL };
+export default API_BASE_URL;
 
 // API helper functions
 export const api = {

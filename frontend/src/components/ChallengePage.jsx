@@ -28,17 +28,34 @@ export default function ChallengePage({
       return;
     }
 
-    const username = localStorage.getItem("ctf_username") || "";
-    if (!username) {
-      setErr("Please set your username on the landing page.");
+    // Get user_id from localStorage (set during registration)
+    const userId = localStorage.getItem("enigmaxUserId");
+    const username = localStorage.getItem("ctf_username") || localStorage.getItem("enigmaxUserName") || "";
+    
+    if (!userId && !username) {
+      setErr("Please register first.");
+      navigate("/");
       return;
     }
 
     try {
+      const requestBody = {
+        challenge_name: name,
+        client_hash: clientHash
+      };
+      
+      // Use user_id if available (new system), otherwise username (old system)
+      if (userId) {
+        requestBody.user_id = userId;
+        requestBody.challenge_number = number;
+      } else {
+        requestBody.username = username;
+      }
+      
       const res = await fetch(`${API_URL}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, challenge_name: name, client_hash: clientHash }),
+        body: JSON.stringify(requestBody),
       });
       const data = await res.json();
       if (!data.success) {

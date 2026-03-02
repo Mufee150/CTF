@@ -22,7 +22,7 @@ app = Flask(__name__)
 # Add a root route for health check
 @app.route("/", methods=["GET"])
 def health_check():
-    return jsonify({"message": "CTF Backend is running!", "status": "healthy"})
+    return jsonify({"message": "EnigmaX Backend is running!", "status": "healthy", "version": "1.0"})
 
 # Supabase client
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
@@ -87,6 +87,69 @@ def handle_preflight():
         response.headers.add('Access-Control-Allow-Methods', "*")
         return response
 
+# Route: Register new user
+@app.route("/api/register", methods=["POST", "OPTIONS"])
+def register():
+    if request.method == "OPTIONS":
+        return ("", 204)
+
+    if not supabase:
+        return jsonify({"success": False, "message": "Database not available"}), 500
+
+    data = request.get_json(force=True, silent=True) or {}
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    phone = (data.get("phone") or "").strip()
+
+    print(f"📥 Registration request: {name} - {email}")
+
+    # Validate inputs
+    if not name or len(name) < 2:
+        return jsonify({"success": False, "message": "Name must be at least 2 characters"}), 400
+    
+    if not email or "@" not in email:
+        return jsonify({"success": False, "message": "Valid email is required"}), 400
+    
+    if not phone or len(phone) < 10:
+        return jsonify({"success": False, "message": "Valid phone number is required"}), 400
+
+    # Check if email already exists
+    try:
+        existing = supabase.table("users").select("id").eq("email", email).execute()
+        if existing.data:
+            return jsonify({"success": False, "message": "This email is already registered. Each participant can only register once."}), 400
+    except Exception as e:
+        print(f"⚠️ Error checking email: {e}")
+        return jsonify({"success": False, "message": "Database error"}), 500
+
+    # Check if phone already exists
+    try:
+        existing_phone = supabase.table("users").select("id").eq("phone", phone).execute()
+        if existing_phone.data:
+            return jsonify({"success": False, "message": "This phone number is already registered. Each participant can only register once."}), 400
+    except Exception as e:
+        print(f"⚠️ Error checking phone: {e}")
+        return jsonify({"success": False, "message": "Database error"}), 500
+
+    # Insert new user
+    now = datetime.now(timezone.utc).isoformat()
+    try:
+        result = supabase.table("users").insert({
+            "name": name,
+            "email": email,
+            "phone": phone,
+            "started_at": now,
+            "total_challenges_completed": 0,
+            "is_finished": False
+        }).execute()
+        
+        user_id = result.data[0]["id"]
+        print(f"✅ Successfully registered user: {name} (ID: {user_id})")
+        return jsonify({"success": True, "user_id": user_id, "message": "Registration successful!"})
+    except Exception as e:
+        print(f"❌ Registration error: {e}")
+        return jsonify({"success": False, "message": "Registration failed. Please try again."}), 500
+
 # Route: Submit challenge solution
 @app.route("/api/submit", methods=["POST", "OPTIONS"])
 def submit():
@@ -97,13 +160,16 @@ def submit():
         return jsonify({"success": False, "error": "Database not available"}), 500
 
     data = request.get_json(force=True, silent=True) or {}
-    username = (data.get("username") or "").strip()
+    user_id = (data.get("user_id") or "").strip()
+    username = (data.get("username") or "").strip()  # Backward compatibility
     challenge_name = (data.get("challenge_name") or "").strip()
     client_hash = (data.get("client_hash") or "").strip()
+    challenge_number = data.get("challenge_number", 0)  # For tracking progress
 
-    print(f"📥 Submit request: {username} - {challenge_name}")
+    print(f"📥 Submit request: user_id={user_id}, challenge={challenge_name}")
 
-    if not username or not challenge_name or not client_hash:
+    # Require either user_id or username for now (transition period)
+    if not (user_id or username) or not challenge_name or not client_hash:
         return jsonify({"success": False, "error": "Missing fields"}), 400
 
     expected = CHALLENGE_HASHES.get(challenge_name)
@@ -117,13 +183,30 @@ def submit():
 
     now = datetime.now(timezone.utc).isoformat()
     try:
-        supabase.table("submissions").insert({
-            "username": username,
+        submission_data = {
             "challenge_name": challenge_name,
             "code": code,
             "timestamp": now
-        }, count="exact").execute()
-        print(f"✅ Successfully recorded submission for {username}")
+        }
+        
+        # Use user_id if available, fetch username from users table
+        if user_id:
+            submission_data["user_id"] = user_id
+            submission_data["challenge_number"] = challenge_number
+            # Fetch username from users table (required field in submissions)
+            try:
+                user_result = supabase.table("users").select("name").eq("id", user_id).execute()
+                if user_result.data:
+                    submission_data["username"] = user_result.data[0]["name"]
+                else:
+                    submission_data["username"] = "unknown"
+            except:
+                submission_data["username"] = "unknown"
+        else:
+            submission_data["username"] = username
+            
+        supabase.table("submissions").insert(submission_data, count="exact").execute()
+        print(f"✅ Successfully recorded submission for {submission_data.get('username', 'unknown')}")
     except Exception as e:
         print(f"⚠️ Insert error (probably duplicate): {e}")
 
@@ -158,6 +241,68 @@ def challenges():
         "challenges": list(CHALLENGE_HASHES.keys()),
         "total": len(CHALLENGE_HASHES)
     })
+
+# Route: Get user progress
+@app.route("/api/progress/<user_id>", methods=["GET"])
+def get_progress(user_id):
+    if not supabase:
+        return jsonify({"error": "Database not available"}), 500
+
+    try:
+        # Get user details
+        user_result = supabase.table("users").select("*").eq("id", user_id).execute()
+        if not user_result.data:
+            return jsonify({"error": "User not found"}), 404
+        
+        user = user_result.data[0]
+        
+        # Get submissions
+        submissions_result = supabase.table("submissions").select("*").eq("user_id", user_id).order("timestamp", desc=False).execute()
+        
+        return jsonify({
+            "user": user,
+            "submissions": submissions_result.data or [],
+            "total_completed": user["total_challenges_completed"],
+            "is_finished": user["is_finished"],
+            "started_at": user["started_at"],
+            "completed_at": user.get("completed_at")
+        })
+    except Exception as e:
+        print(f"❌ Error fetching progress: {e}")
+        return jsonify({"error": "Database error"}), 500
+
+# Route: Get leaderboard
+@app.route("/api/leaderboard", methods=["GET"])
+def get_leaderboard():
+    if not supabase:
+        return jsonify({"leaderboard": [], "error": "Database not available"}), 500
+
+    try:
+        # Use the leaderboard view we created
+        result = supabase.table("leaderboard").select("*").execute()
+        return jsonify({"leaderboard": result.data or []})
+    except Exception as e:
+        print(f"❌ Error fetching leaderboard: {e}")
+        # Fallback: calculate manually if view doesn't exist yet
+        try:
+            result = supabase.table("users").select("name, email, started_at, completed_at").eq("is_finished", True).execute()
+            leaderboard = []
+            for user in result.data or []:
+                if user.get("started_at") and user.get("completed_at"):
+                    from datetime import datetime
+                    start = datetime.fromisoformat(user["started_at"].replace('Z', '+00:00'))
+                    end = datetime.fromisoformat(user["completed_at"].replace('Z', '+00:00'))
+                    duration_seconds = (end - start).total_seconds()
+                    leaderboard.append({
+                        "name": user["name"],
+                        "email": user["email"],
+                        "duration_seconds": duration_seconds
+                    })
+            leaderboard.sort(key=lambda x: x["duration_seconds"])
+            return jsonify({"leaderboard": leaderboard})
+        except Exception as e2:
+            print(f"❌ Fallback leaderboard error: {e2}")
+            return jsonify({"leaderboard": [], "error": "Database error"}), 500
 
 # Error handler
 @app.errorhandler(404)

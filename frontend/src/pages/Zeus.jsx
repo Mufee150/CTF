@@ -1,45 +1,89 @@
-// Zeus.jsx
-import ChallengeContainer from "../components/ChallengeContainer";
+import { useState } from "react";
+import ChallengePage from "../components/ChallengePage";
 
 const NAME = "zeus";
 const NUMBER = 6;
 const TITLE = "Zeus";
-const NEXT_ROUTE = "/challenge/hermes";
-
-const obfuscatedCode = `
-function _0x41ab(_0x4b6ca8,_0x2172f7){var _0x330621=_0x3306();return _0x41ab=function(_0x41ab2f,_0x4f04f1){_0x41ab2f=_0x41ab2f-0x6a;var _0xc12ba9=_0x330621[_0x41ab2f];return _0xc12ba9;},_0x41ab(_0x4b6ca8,_0x2172f7);}function _0x3306(){var _0x473db0=['log','21445dvcWgh','8708008LNzghm','Decoded\x20password\x20is:\x20vitruvianmatrix','28617516hnjdsU','2wSvdvF','1028046LFsWmB','5QSkAgC','710304Iqvemk','4800672mZffFY','1763560pVtpoL'];_0x3306=function(){return _0x473db0;};return _0x3306();}(function(_0x50014d,_0x59023a){var _0x2c60fe=_0x41ab,_0x311d54=_0x50014d();while(!![]){try{var _0x57b5c3=-parseInt(_0x2c60fe(0x6c))/0x1*(parseInt(_0x2c60fe(0x70))/0x2)+-parseInt(_0x2c60fe(0x74))/0x3+parseInt(_0x2c60fe(0x6a))/0x4+-parseInt(_0x2c60fe(0x72))/0x5*(parseInt(_0x2c60fe(0x71))/0x6)+parseInt(_0x2c60fe(0x73))/0x7+-parseInt(_0x2c60fe(0x6d))/0x8+parseInt(_0x2c60fe(0x6f))/0x9;if(_0x57b5c3===_0x59023a)break;else _0x311d54['push'](_0x311d54['shift']());}catch(_0x179b67){_0x311d54['push'](_0x311d54['shift']());}}}(_0x3306,0xcd37f),(function(){var _0x1e0469=_0x41ab;console[_0x1e0469(0x6b)](_0x1e0469(0x6e));}()));
-`;
+const HASH = "31489056e0916d59fe3add79e63f095af3ffb81604691f21cad442a85c7be617";
+const CODE = "$";
 
 export default function Zeus() {
-  const specialSubmit = (input, setErr, setShowCode, setCodeText, navigate) => {
-    const normalized = input.toLowerCase().replace(/\s+/g, " ").trim();
-
-const trigger = "mar athanasius college of engineering kothamangalam";
-if (normalized.includes(trigger)) {
-  setShowCode(true);
-  setCodeText(obfuscatedCode);
-  setErr("");
-}
-
-    else if (normalized === "vitruvianmatrix") {
-      setShowCode(false);
-      setCodeText("");
-      setErr("");
-      navigate(NEXT_ROUTE);
-    } else {
-      setShowCode(false);
-      setCodeText("");
-      setErr("Incorrect. Hint: Check the console for coordinates or decode the code.");
-    }
-  };
+  const [hoveredCell, setHoveredCell] = useState(null);
+  
+  // Hidden pattern - some cells contain secret data
+  const grid = [
+    ["⚡", "☁️", "⚡", "☁️", "⚡", "☁️", "⚡"],
+    ["☁️", "⚡", "☁️", "⚡", "☁️", "⚡", "☁️"],
+    ["⚡", "☁️", "⚡", "☁️", "⚡", "☁️", "⚡"],
+    ["☁️", "⚡", "☁️", "⚡", "☁️", "⚡", "☁️"],
+    ["⚡", "☁️", "⚡", "☁️", "⚡", "☁️", "⚡"],
+    ["☁️", "⚡", "☁️", "⚡", "☁️", "⚡", "☁️"],
+    ["⚡", "☁️", "⚡", "☁️", "⚡", "☁️", "⚡"],
+  ];
 
   return (
-    <ChallengeContainer
-      title={TITLE}
-      name={NAME}
-      number={NUMBER}
-      nextRoute={NEXT_ROUTE}
-      specialSubmit={specialSubmit}
-    />
+    <>
+    <div className="min-h-screen bg-gradient-to-br from-yellow-950 via-purple-950 to-black text-white flex items-center justify-center p-8">
+      <div className="max-w-3xl w-full space-y-8">
+        <div className="text-center space-y-4">
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-yellow-400 via-white to-yellow-400 bg-clip-text text-transparent animate-pulse">
+            ⚡ Zeus' Throne ⚡
+          </h1>
+          <p className="text-xl text-gray-300">
+            The sky god's power is hidden in plain sight. Look beyond what you see.
+          </p>
+        </div>
+
+        <div className="bg-black/50 backdrop-blur-lg rounded-2xl p-8 border-2 border-yellow-500/30 shadow-2xl shadow-yellow-500/20 space-y-6">
+          <div className="text-center space-y-6">
+            <div className="text-sm text-gray-400">
+              <p className="italic">"Not all that glitters is gold, but all that's hidden can be found..."</p>
+            </div>
+
+            <div className="bg-purple-900/30 p-6 rounded-xl border border-yellow-500/20">
+              <p className="text-sm text-gray-500 mb-4">Zeus' Lightning Grid:</p>
+              <div id="zeus-lightning-grid" className="grid grid-cols-7 gap-2 max-w-md mx-auto">
+                {grid.map((row, i) => 
+                  row.map((cell, j) => (
+                    <div
+                      key={`${i}-${j}`}
+                      className={`w-10 h-10 flex items-center justify-center text-2xl rounded cursor-pointer transition-all duration-200 ${
+                        cell === "⚡" 
+                          ? "bg-yellow-500/20 hover:bg-yellow-500/40 hover:scale-110" 
+                          : "bg-gray-700/20 hover:bg-gray-600/40"
+                      }`}
+                      data-power={cell === "⚡" ? "zeus" : "mortal"}
+                      onMouseEnter={() => setHoveredCell(`${i}-${j}`)}
+                      onMouseLeave={() => setHoveredCell(null)}
+                    >
+                      {cell}
+                    </div>
+                  ))
+                )}
+              </div>
+              {/* Hidden answer - visible in Inspector */}
+              <span id="zeus-secret" style={{position: 'absolute', left: '-9999px', opacity: 0}}>
+                FLAG: 47 - The answer is forty-seven
+              </span>
+            </div>
+
+            <div className="mt-6 text-sm text-gray-400 space-y-2">
+              <p>🔍 <strong>Hint:</strong> Mortals see only the surface, gods see the code beneath</p>
+              <p>⚡ Use your divine tools to see what Zeus has hidden</p>
+            </div>
+          </div>
+
+          <ChallengePage
+            title={TITLE}
+            name={NAME}
+            number={NUMBER}
+            hash={HASH}
+            code={CODE}
+            nextRoute="/challenge/hermes"
+          />
+        </div>
+      </div>
+    </div>
+    </>
   );
 }

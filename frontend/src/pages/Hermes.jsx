@@ -57,26 +57,53 @@ export default function Hermes() {
 
   return (
     <>
-      {/* Hidden instruction */}
-      <h2
-        id="konami-instructions"
-        style={{
-          color: "white",     // looks white in DOM
-          opacity: 0,         // invisible on screen
-          userSelect: "none", // can't highlight
-          pointerEvents: "none" // can’t click/select
-        }}
-      >
-        ↑ ↑ ↓ ↓ ← → ← → b a     </h2>
+      <div className="min-h-screen bg-gradient-to-br from-orange-950 via-yellow-950 to-black text-white flex items-center justify-center p-8">
+        <div className="max-w-2xl w-full space-y-8">
+          <div className="text-center space-y-4">
+            <h1 className="text-6xl font-bold bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-400 bg-clip-text text-transparent animate-pulse">
+              🪽 Hermes' Speed 🪽
+            </h1>
+            <p className="text-xl text-gray-300">
+              The messenger god moves faster than sight...
+            </p>
+          </div>
 
-      <ChallengePage
-        title={TITLE}
-        name={NAME}
-        number={NUMBER}
-        hash={HASH}
-        code={CODE}
-        nextRoute="/challenge/Calypso"
-      />
+          <div className="bg-black/50 backdrop-blur-lg rounded-2xl p-8 border-2 border-orange-500/30 space-y-6">
+            <div className="text-center space-y-4">
+              <div className="text-8xl mb-4">⚡</div>
+              <p className="text-lg italic text-orange-300">
+                "Some messages are not meant to be seen,<br />
+                but they can still be found..."
+              </p>
+              <p className="text-sm text-gray-500 mt-6">
+                💡 Hint: Inspect what lies beneath the surface
+              </p>
+            </div>
+          </div>
+
+          {/* Hidden instruction */}
+          <h2
+            id="konami-instructions"
+            style={{
+              color: "white",     // looks white in DOM
+              opacity: 0,         // invisible on screen
+              userSelect: "none", // can't highlight
+              pointerEvents: "none" // can't click/select
+            }}
+          >
+            ↑ ↑ ↓ ↓ ← → ← → b a
+          </h2>
+
+          <ChallengePage
+            title={TITLE}
+            name={NAME}
+            number={NUMBER}
+            hash={HASH}
+            code={CODE}
+            nextRoute="/challenge/calypso"
+          />
+        </div>
+      </div>
     </>
   );
 }

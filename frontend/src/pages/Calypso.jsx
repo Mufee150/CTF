@@ -1,68 +1,60 @@
-import { useEffect } from "react";
 import ChallengePage from "../components/ChallengePage";
 
 const NAME = "calypso";
 const NUMBER = 8;
 const TITLE = "Calypso";
 const HASH =
-  "0d1af12ee692bc4bac27e99603f21771dd617d9b3d5f4748e89abf1d46243dfb";
+  "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b";
 const CODE = "Q";
-
-// --- Hidden obfuscated password ---
-const HiddenPassword = () => {
-  useEffect(() => {
-    (function () {
-      // original password
-      const password = "odysseyacrosstime";
-
-      // Encode the password using Base64
-      const encoded = btoa(password); // real clue
-
-      // Some random decoy strings (plain text)
-      const decoysPlain = [
-        "x9v2l8k1m",
-        "randomtext123",
-        "fooBarBaz!",
-        "loremIpsum",
-        "qwerty987",
-      ];
-
-      // Encode all decoys in Base64
-      const decoys = decoysPlain.map((str) => btoa(str));
-
-      // Mix the password with decoys
-      const mixed = [...decoys, encoded]
-        .sort(() => Math.random() - 0.5) // shuffle
-        .join(" | "); // separate with |
-
-      // Create hidden span
-      const span = document.createElement("span");
-      span.id = "titleBase64";
-      span.style.color = "white"; // invisible on white background
-      span.style.fontSize = "1px"; // tiny text
-      span.textContent = mixed;
-
-      // Append to body (so visible in Elements)
-      document.body.appendChild(span);
-    })();
-  }, []);
-
-  return null; // nothing rendered directly
-};
 
 export default function Calypso() {
   return (
     <>
-      {/* Challenge page */}
-      <ChallengePage
-        title={TITLE}
-        name={NAME}
-        number={NUMBER}
-        hash={HASH}
-        code={CODE}
-        nextRoute="/challenge/Circe"
-      />
-      <HiddenPassword />
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gradient-to-br from-purple-950 via-indigo-950 to-black text-white">
+      <div className="max-w-2xl w-full bg-purple-900/20 backdrop-blur-sm rounded-lg p-8 border-2 border-purple-500/40 shadow-2xl">
+        <h1 className="text-4xl font-bold text-purple-300 mb-6 text-center">
+          🏝️ Calypso's Island Riddle
+        </h1>
+        
+        <div className="text-purple-200 space-y-4 mb-8">
+          <p className="text-lg italic">
+            "Seven years I kept Odysseus on my island shore,<br />
+            Each year with riddles, puzzles, and much more.<br />
+            Solve this ancient mystery if you seek to flee..."
+          </p>
+          
+          <div className="bg-purple-950/40 p-6 rounded-lg border border-purple-400/30 mt-6">
+            <p className="text-xl font-semibold text-purple-100 mb-4">The Riddle:</p>
+            <p className="text-purple-200 leading-relaxed">
+              I sailed <span className="text-yellow-300 font-bold">seven years</span> across the wine-dark sea,<br />
+              Through <span className="text-yellow-300 font-bold">ten long years</span> of war before I could be free,<br />
+              From <span className="text-yellow-300 font-bold">Troy</span> to <span className="text-yellow-300 font-bold">Ithaca</span> my journey finally ends,<br />
+              How many total years before I see my friends?
+            </p>
+            
+            <div className="mt-6 pt-4 border-t border-purple-400/20">
+              <p className="text-sm text-purple-300 italic">
+                💡 Hint: Count ALL the years in Odysseus's journey
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div className="text-center text-purple-300/70 text-sm mb-4">
+          Enter the total number of years below ⬇️
+        </div>
+
+        <ChallengePage
+          title={TITLE}
+          name={NAME}
+          number={NUMBER}
+          hash={HASH}
+          code={CODE}
+          nextRoute="/challenge/circe"
+        />
+      </div>
+    </div>
     </>
   );
 }
