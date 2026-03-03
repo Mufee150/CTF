@@ -22,7 +22,8 @@ export default function ChallengePage({
     setErr("");
 
     // Instant client-side check
-    const clientHash = SHA256(value).toString();
+    const normalizedValue = value.trim().toLowerCase();
+    const clientHash = SHA256(normalizedValue).toString();
     if (clientHash !== hash) {
       setErr("Incorrect — try again.");
       return;

@@ -16,7 +16,8 @@ export default function ChallengePageHiddenError({ title, name, number, hash, co
     setErr("");
     setShowHiddenErr(false);
 
-    const clientHash = SHA256(value).toString();
+    const normalizedValue = value.trim().toLowerCase();
+    const clientHash = SHA256(normalizedValue).toString();
 
     if (clientHash !== hash) {
       setErr("flag: spintoera");

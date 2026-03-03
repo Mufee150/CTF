@@ -32,7 +32,8 @@ export default function ChallengeLogic({ name, number, hash, code, nextRoute, ch
     e.preventDefault();
     setErr("");
 
-    const clientHash = SHA256(value).toString();
+    const normalizedValue = value.trim().toLowerCase();
+    const clientHash = SHA256(normalizedValue).toString();
     if (clientHash !== hash) {
       setErr("Incorrect — try again.");
       return;
