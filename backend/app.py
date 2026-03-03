@@ -88,10 +88,7 @@ DEFAULT_CHALLENGE_CODES = {
 }
 
 CHALLENGE_HASHES = DEFAULT_CHALLENGE_HASHES.copy()
-CHALLENGE_HASHES.update(parse_map(os.environ.get("CHALLENGE_HASHES", "")))
-
 CHALLENGE_CODES = DEFAULT_CHALLENGE_CODES.copy()
-CHALLENGE_CODES.update(parse_map(os.environ.get("CHALLENGE_CODES", "")))
 
 CHALLENGE_ORDER = {
     "odysseus": 1,
