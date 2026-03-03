@@ -93,6 +93,24 @@ CHALLENGE_HASHES.update(parse_map(os.environ.get("CHALLENGE_HASHES", "")))
 CHALLENGE_CODES = DEFAULT_CHALLENGE_CODES.copy()
 CHALLENGE_CODES.update(parse_map(os.environ.get("CHALLENGE_CODES", "")))
 
+CHALLENGE_ORDER = {
+    "odysseus": 1,
+    "penelope": 2,
+    "telemachus": 3,
+    "athena": 4,
+    "poseidon": 5,
+    "zeus": 6,
+    "hermes": 7,
+    "calypso": 8,
+    "circe": 9,
+    "sirens": 10,
+    "ares": 11,
+    "hades": 12,
+    "apollo": 13,
+    "hephaestus": 14,
+    "artemis": 15,
+}
+
 print(f"📋 Loaded {len(CHALLENGE_HASHES)} challenge hashes")
 print(f"📋 Loaded {len(CHALLENGE_CODES)} challenge codes")
 
@@ -203,7 +221,7 @@ def submit():
     username = (data.get("username") or "").strip()  # Backward compatibility
     challenge_name = (data.get("challenge_name") or "").strip()
     client_hash = (data.get("client_hash") or "").strip()
-    challenge_number = data.get("challenge_number", 0)  # For tracking progress
+    challenge_number = CHALLENGE_ORDER.get(challenge_name, 0)
 
     print(f"📥 Submit request: user_id={user_id}, challenge={challenge_name}")
 
@@ -248,6 +266,24 @@ def submit():
         print(f"✅ Successfully recorded submission for {submission_data.get('username', 'unknown')}")
     except Exception as e:
         print(f"⚠️ Insert error (probably duplicate): {e}")
+
+    if user_id and challenge_number:
+        try:
+            user_res = supabase.table("users").select("total_challenges_completed,is_finished").eq("id", user_id).execute()
+            if user_res.data:
+                current_total = int(user_res.data[0].get("total_challenges_completed") or 0)
+                new_total = max(current_total, int(challenge_number))
+
+                update_data = {"total_challenges_completed": new_total}
+
+                if new_total >= len(CHALLENGE_ORDER) and not user_res.data[0].get("is_finished"):
+                    update_data["is_finished"] = True
+                    update_data["completed_at"] = now
+
+                supabase.table("users").update(update_data).eq("id", user_id).execute()
+                print(f"✅ Updated progress for user {user_id}: {new_total}/{len(CHALLENGE_ORDER)}")
+        except Exception as e:
+            print(f"⚠️ Progress update error: {e}")
 
     return jsonify({"success": True, "code": code})
 

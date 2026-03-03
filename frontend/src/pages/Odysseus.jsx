@@ -25,9 +25,6 @@ export default function Odysseus() {
               <p className="text-center text-gray-300 text-lg mb-2">
                 The ancient hero Odysseus navigated by the stars.
               </p>
-              <p className="text-center text-gray-400 text-sm mb-4">
-                Look to the heavens and find what the golden stars spell. Hover to reveal the letters.
-              </p>
               
               <ChallengeLogic
                 title={TITLE}
