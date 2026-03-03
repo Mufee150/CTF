@@ -51,8 +51,47 @@ def parse_map(env_value: str):
             m[k.strip()] = v.strip()
     return m
 
-CHALLENGE_HASHES = parse_map(os.environ.get("CHALLENGE_HASHES", ""))
-CHALLENGE_CODES = parse_map(os.environ.get("CHALLENGE_CODES", ""))
+DEFAULT_CHALLENGE_HASHES = {
+    "odysseus": "2aaab795b3836904f82efc6ca2285d927aed75206214e1da383418eb90c9052f",
+    "penelope": "04d75cde9beeb4d14f7f4e95dab88b6f9398f71eb837000c2cffc1600418a1e0",
+    "telemachus": "80a76608587fa6f9ae56b5b4b661f884dc924d054914735fa06963ca515e8097",
+    "athena": "f0483107f8792b3ecb4a07279debf58aa2c271d26f629c6495dc5f046b0555a0",
+    "poseidon": "3ad63493e71a28e268cdce310498f59100e938e4d85a9e0da5a0daa981ef9dce",
+    "zeus": "31489056e0916d59fe3add79e63f095af3ffb81604691f21cad442a85c7be617",
+    "hermes": "48398245bb0dcfead2309ac3272f399c26fd8964b8919e049001ffc78159bc28",
+    "calypso": "f5ca38f748a1d6eaf726b8a42fb575c3c71f1864a8143301782de13da2d9202b",
+    "circe": "6144545e67abcfeb8ce053127fc5189ea9f094454ec54ec9dd7bf1774d74d62d",
+    "sirens": "982cba6c0950686e37519d347bfa51deb9c933de7844a3800973b65d78c4667e",
+    "ares": "716fa99f93d9afbacb0f0da959f0a53c1f56681e59e38a99a3e1c945412e6e47",
+    "hades": "a42e815c58f3977fe531a80ffd4659121c3b9f876a89869042816c369ed80776",
+    "apollo": "48582bd628b7c80064780ba9ecce2d435db042b40bd4335a7cea4b4c254e8178",
+    "hephaestus": "c38d079d287fd7856612a8fc448178f5737fa4486dcbc0eff3b73571476a1157",
+    "artemis": "afacd969e5ec38fddc33add9fd6a2dbff7b3affd71e95064271897e99f573ac4",
+}
+
+DEFAULT_CHALLENGE_CODES = {
+    "odysseus": "H",
+    "penelope": "g",
+    "telemachus": "@",
+    "athena": "%",
+    "poseidon": "Z",
+    "zeus": "$",
+    "hermes": "&",
+    "calypso": "Q",
+    "circe": "*",
+    "sirens": "!",
+    "ares": "⚔️",
+    "hades": "💀",
+    "apollo": "🎭",
+    "hephaestus": "🔨",
+    "artemis": "🏹",
+}
+
+CHALLENGE_HASHES = DEFAULT_CHALLENGE_HASHES.copy()
+CHALLENGE_HASHES.update(parse_map(os.environ.get("CHALLENGE_HASHES", "")))
+
+CHALLENGE_CODES = DEFAULT_CHALLENGE_CODES.copy()
+CHALLENGE_CODES.update(parse_map(os.environ.get("CHALLENGE_CODES", "")))
 
 print(f"📋 Loaded {len(CHALLENGE_HASHES)} challenge hashes")
 print(f"📋 Loaded {len(CHALLENGE_CODES)} challenge codes")
