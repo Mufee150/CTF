@@ -39,10 +39,21 @@ const CHALLENGE_ROUTES = [
   "/challenge/artemis",
 ];
 
+// Helper function to fetch with timeout
+const fetchWithTimeout = (url, timeoutMs = 8000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  
+  return fetch(url, { signal: controller.signal })
+    .finally(() => clearTimeout(timeoutId));
+};
+
 export default function ProtectedChallenge({ challengeName, children }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [isAllowed, setIsAllowed] = useState(false);
+  const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     checkProgress();
@@ -60,7 +71,7 @@ export default function ProtectedChallenge({ challengeName, children }) {
     };
   }, [challengeName]);
 
-  const checkProgress = async () => {
+  const checkProgress = async (retryAttempt = 0) => {
     const userId = localStorage.getItem("enigmaxUserId");
     
     // If not registered, redirect to landing
@@ -70,7 +81,7 @@ export default function ProtectedChallenge({ challengeName, children }) {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/progress/${userId}`);
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/progress/${userId}`, 8000);
       const data = await response.json();
       
       if (!response.ok) {
@@ -110,10 +121,25 @@ export default function ProtectedChallenge({ challengeName, children }) {
 
       // User is on the correct challenge
       setIsAllowed(true);
+      setError(null);
     } catch (error) {
       console.error("Error checking progress:", error);
-      // On network error, allow access but log it
+      
+      // Retry logic: attempt up to 2 retries with exponential backoff
+      if (retryAttempt < 2) {
+        const delay = Math.pow(2, retryAttempt) * 1000; // 1s, 2s
+        setTimeout(() => {
+          setRetryCount(retryAttempt + 1);
+          checkProgress(retryAttempt + 1);
+        }, delay);
+        return;
+      }
+      
+      // After retries failed, allow access since user is still logged in (fallback mode)
+      // The app will work even if backend is temporarily unavailable
       setIsAllowed(true);
+      setError(null);
+      console.warn("⚠️ Backend temporarily unavailable, running in offline mode");
     } finally {
       setIsLoading(false);
     }
@@ -125,6 +151,12 @@ export default function ProtectedChallenge({ challengeName, children }) {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-cyan-500 mx-auto mb-4"></div>
           <p className="text-cyan-400 text-lg">Verifying your progress...</p>
+          {retryCount > 0 && (
+            <p className="text-gray-400 text-sm mt-3">
+              {retryCount === 1 && "Checking backend (retry 1/2)..."}
+              {retryCount === 2 && "Checking backend (retry 2/2)..."}
+            </p>
+          )}
         </div>
       </div>
     );

@@ -4,6 +4,15 @@ import RegistrationForm from "../components/RegistrationForm";
 import StarrySky from "../components/StarrySky";
 import API_BASE_URL from "../config/api";
 
+// Helper function for fetch with timeout
+const fetchWithTimeout = (url, timeoutMs = 5000) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  
+  return fetch(url, { signal: controller.signal })
+    .finally(() => clearTimeout(timeoutId));
+};
+
 const CHALLENGE_ROUTES = [
   "/challenge/odysseus",
   "/challenge/penelope",
@@ -37,18 +46,44 @@ export default function Landing() {
       setIsRegistered(true);
       setUserName(name || "Odyssey Seeker");
       
-      // Fetch progress in background (non-blocking)
-      fetch(`${API_BASE_URL}/api/progress/${userId}`)
-        .then(res => res.json())
-        .then(data => {
+      // Fetch progress with retry logic
+      let retryAttempt = 0;
+      const fetchProgress = async () => {
+        try {
+          const response = await fetchWithTimeout(`${API_BASE_URL}/api/progress/${userId}`, 5000);
+          
+          if (!response.ok) {
+            // If user ID is invalid, clear and stay on landing
+            localStorage.removeItem("enigmaxUserId");
+            localStorage.removeItem("enigmaxUserName");
+            setIsRegistered(false);
+            return;
+          }
+          
+          const data = await response.json();
           if (data.total_completed !== undefined) {
             setCurrentChallenge(data.total_completed);
           }
           if (data.is_finished) {
             navigate("/congrats", { replace: true });
           }
-        })
-        .catch(() => {});
+        } catch (error) {
+          console.log("Progress fetch error, retrying...", error);
+          // Retry up to 2 times with backoff
+          if (retryAttempt < 2) {
+            retryAttempt++;
+            const delay = Math.pow(2, retryAttempt) * 500; // 1s, 2s
+            setTimeout(fetchProgress, delay);
+          } else {
+            // After retries, use default challenge 0 (odysseus)
+            // User is still logged in and can continue
+            console.warn("⚠️ Could not fetch progress, defaulting to challenge 1");
+            setCurrentChallenge(0);
+          }
+        }
+      };
+      
+      fetchProgress();
     }
   }, []);
 
