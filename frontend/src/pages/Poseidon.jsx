@@ -1,7 +1,7 @@
 import ChallengePage from "../components/ChallengePage";
 
 const NAME = "poseidon";
-const NUMBER = 5;
+const NUMBER = 15;
 const TITLE = "Poseidon";
 const HASH = "3ad63493e71a28e268cdce310498f59100e938e4d85a9e0da5a0daa981ef9dce";
 const CODE = "Z";
@@ -53,7 +53,7 @@ export default function Poseidon() {
             number={NUMBER}
             hash={HASH}
             code={CODE}
-            nextRoute="/challenge/zeus"
+            nextRoute="/congrats"
           />
         </div>
       </div>

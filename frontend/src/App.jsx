@@ -46,18 +46,18 @@ export default function App() {
       <Route path="/challenge/1" element={<ProtectedChallenge challengeName="odysseus"><Odysseus /></ProtectedChallenge>} />
       <Route path="/challenge/2" element={<ProtectedChallenge challengeName="penelope"><Penelope /></ProtectedChallenge>} />
       <Route path="/challenge/3" element={<ProtectedChallenge challengeName="telemachus"><Telemachus /></ProtectedChallenge>} />
-      <Route path="/challenge/4" element={<ProtectedChallenge challengeName="athena"><Athena /></ProtectedChallenge>} />
-      <Route path="/challenge/5" element={<ProtectedChallenge challengeName="poseidon"><Poseidon /></ProtectedChallenge>} />
+      <Route path="/challenge/4" element={<ProtectedChallenge challengeName="hades"><Hades /></ProtectedChallenge>} />
+      <Route path="/challenge/5" element={<ProtectedChallenge challengeName="artemis"><Artemis /></ProtectedChallenge>} />
       <Route path="/challenge/6" element={<ProtectedChallenge challengeName="zeus"><Zeus /></ProtectedChallenge>} />
       <Route path="/challenge/7" element={<ProtectedChallenge challengeName="hermes"><Hermes /></ProtectedChallenge>} />
       <Route path="/challenge/8" element={<ProtectedChallenge challengeName="calypso"><Calypso /></ProtectedChallenge>} />
       <Route path="/challenge/9" element={<ProtectedChallenge challengeName="circe"><Circe /></ProtectedChallenge>} />
       <Route path="/challenge/10" element={<ProtectedChallenge challengeName="sirens"><Sirens /></ProtectedChallenge>} />
       <Route path="/challenge/11" element={<ProtectedChallenge challengeName="ares"><Ares /></ProtectedChallenge>} />
-      <Route path="/challenge/12" element={<ProtectedChallenge challengeName="hades"><Hades /></ProtectedChallenge>} />
+      <Route path="/challenge/12" element={<ProtectedChallenge challengeName="athena"><Athena /></ProtectedChallenge>} />
       <Route path="/challenge/13" element={<ProtectedChallenge challengeName="apollo"><Apollo /></ProtectedChallenge>} />
       <Route path="/challenge/14" element={<ProtectedChallenge challengeName="hephaestus"><Hephaestus /></ProtectedChallenge>} />
-      <Route path="/challenge/15" element={<ProtectedChallenge challengeName="artemis"><Artemis /></ProtectedChallenge>} />
+      <Route path="/challenge/15" element={<ProtectedChallenge challengeName="poseidon"><Poseidon /></ProtectedChallenge>} />
 
       {/* fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

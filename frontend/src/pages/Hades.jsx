@@ -1,7 +1,7 @@
 import ChallengePage from "../components/ChallengePage";
 
 const NAME = "hades";
-const NUMBER = 12;
+const NUMBER = 4;
 const TITLE = "Hades";
 const HASH = "a42e815c58f3977fe531a80ffd4659121c3b9f876a89869042816c369ed80776";
 const CODE = "💀";
@@ -50,7 +50,7 @@ export default function Hades() {
             number={NUMBER}
             hash={HASH}
             code={CODE}
-            nextRoute="/challenge/apollo"
+            nextRoute="/challenge/artemis"
           />
         </div>
       </div>

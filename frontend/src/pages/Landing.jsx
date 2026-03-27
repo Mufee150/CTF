@@ -17,18 +17,18 @@ const CHALLENGE_ROUTES = [
   "/challenge/odysseus",
   "/challenge/penelope",
   "/challenge/telemachus",
-  "/challenge/athena",
-  "/challenge/poseidon",
+  "/challenge/hades",
+  "/challenge/artemis",
   "/challenge/zeus",
   "/challenge/hermes",
   "/challenge/calypso",
   "/challenge/circe",
   "/challenge/sirens",
   "/challenge/ares",
-  "/challenge/hades",
+  "/challenge/athena",
   "/challenge/apollo",
   "/challenge/hephaestus",
-  "/challenge/artemis",
+  "/challenge/poseidon",
 ];
 
 export default function Landing() {

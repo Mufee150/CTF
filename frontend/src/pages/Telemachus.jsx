@@ -44,7 +44,7 @@ export default function Telemachus() {
             number={NUMBER}
             hash={HASH}
             code={CODE}
-            nextRoute="/challenge/athena"
+            nextRoute="/challenge/hades"
           />
         </div>
       </div>

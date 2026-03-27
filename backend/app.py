@@ -94,18 +94,18 @@ CHALLENGE_ORDER = {
     "odysseus": 1,
     "penelope": 2,
     "telemachus": 3,
-    "athena": 4,
-    "poseidon": 5,
+    "hades": 4,
+    "artemis": 5,
     "zeus": 6,
     "hermes": 7,
     "calypso": 8,
     "circe": 9,
     "sirens": 10,
     "ares": 11,
-    "hades": 12,
+    "athena": 12,
     "apollo": 13,
     "hephaestus": 14,
-    "artemis": 15,
+    "poseidon": 15,
 }
 
 print(f"📋 Loaded {len(CHALLENGE_HASHES)} challenge hashes")

@@ -127,7 +127,7 @@ export default function Hephaestus() {
           number={NUMBER}
           hash={HASH}
           code={CODE}
-          nextRoute="/challenge/artemis"
+          nextRoute="/challenge/poseidon"
         />
       </div>
 

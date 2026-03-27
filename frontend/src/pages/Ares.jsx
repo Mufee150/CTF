@@ -45,7 +45,7 @@ export default function Ares() {
             number={NUMBER}
             hash={HASH}
             code={CODE}
-            nextRoute="/challenge/hades"
+            nextRoute="/challenge/athena"
           />
         </div>
       </div>

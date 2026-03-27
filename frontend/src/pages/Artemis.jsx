@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import ChallengePage from "../components/ChallengePage";
 
 const NAME = "artemis";
-const NUMBER = 15;
+const NUMBER = 5;
 const TITLE = "Artemis";
 const HASH = "afacd969e5ec38fddc33add9fd6a2dbff7b3affd71e95064271897e99f573ac4";
 const CODE = "🏹";
@@ -121,7 +121,7 @@ export default function Artemis() {
           number={NUMBER}
           hash={HASH}
           code={CODE}
-          nextRoute="/congrats"
+          nextRoute="/challenge/zeus"
         />
       </div>
     </div>

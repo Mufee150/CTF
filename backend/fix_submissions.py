@@ -29,10 +29,10 @@ else:
     
     # Challenge number mapping
     CHALLENGE_NUMBERS = {
-        "odysseus": 1, "penelope": 2, "telemachus": 3, "athena": 4,
-        "poseidon": 5, "circe": 6, "sirens": 7, "calypso": 8,
-        "hermes": 9, "hephaestus": 10, "apollo": 11, "artemis": 12,
-        "ares": 13, "hades": 14, "zeus": 15
+        "odysseus": 1, "penelope": 2, "telemachus": 3, "hades": 4,
+        "artemis": 5, "zeus": 6, "hermes": 7, "calypso": 8,
+        "circe": 9, "sirens": 10, "ares": 11, "athena": 12,
+        "apollo": 13, "hephaestus": 14, "poseidon": 15
     }
     
     for submission in result.data:
