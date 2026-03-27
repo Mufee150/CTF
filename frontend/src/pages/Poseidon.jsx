@@ -44,6 +44,7 @@ export default function Poseidon() {
             <div className="text-sm text-gray-400 space-y-2">
               <p>🔍 <strong>Hint:</strong> Each letter follows its own rule based on position</p>
               <p>🌊 The depths hide a pattern in the encoding</p>
+              <p>💡 Each letter in the decoded word is not related to the letter at the same position in the original word, but to the position just before or after it.</p>
             </div>
           </div>
 
