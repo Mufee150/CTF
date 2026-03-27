@@ -109,7 +109,7 @@ export default function Artemis() {
             </div>
             <div className="mt-6 p-4 bg-black/50 rounded-lg">
               <p className="text-sm text-gray-400 leading-relaxed">
-                💡 Each moon phase has a number. Follow the hunting sequence...
+                💡 Each position has an associated letter. Follow the hunting sequence...
               </p>
             </div>
           </div>
