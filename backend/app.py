@@ -200,7 +200,21 @@ def register():
         print(f"✅ Successfully registered user: {name} (ID: {user_id})")
         return jsonify({"success": True, "user_id": user_id, "message": "Registration successful!"})
     except Exception as e:
+        err = str(e).lower()
         print(f"❌ Registration error: {e}")
+
+        if "duplicate" in err and "email" in err:
+            return jsonify({"success": False, "message": "This email is already registered. Each participant can only register once."}), 400
+
+        if "duplicate" in err and "phone" in err:
+            return jsonify({"success": False, "message": "This phone number is already registered. Each participant can only register once."}), 400
+
+        if "row-level security" in err or "permission denied" in err:
+            return jsonify({"success": False, "message": "Server database permissions are not configured correctly. Please contact organizer."}), 500
+
+        if "column" in err and ("phone" in err or "total_challenges_completed" in err or "is_finished" in err):
+            return jsonify({"success": False, "message": "Database schema is outdated. Organizer must run latest Supabase schema."}), 500
+
         return jsonify({"success": False, "message": "Registration failed. Please try again."}), 500
 
 # Route: Submit challenge solution
