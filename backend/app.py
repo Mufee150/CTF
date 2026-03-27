@@ -167,23 +167,22 @@ def register():
     if not phone or len(phone) < 10:
         return jsonify({"success": False, "message": "Valid phone number is required"}), 400
 
-    # Check if email already exists
+    # Check if email already exists (best effort)
+    # If this lookup fails due transient DB/RLS config issues, still try insert below.
     try:
         existing = supabase.table("users").select("id").eq("email", email).execute()
         if existing.data:
             return jsonify({"success": False, "message": "This email is already registered. Each participant can only register once."}), 400
     except Exception as e:
-        print(f"⚠️ Error checking email: {e}")
-        return jsonify({"success": False, "message": "Database error"}), 500
+        print(f"⚠️ Email pre-check failed, continuing to insert: {e}")
 
-    # Check if phone already exists
+    # Check if phone already exists (best effort)
     try:
         existing_phone = supabase.table("users").select("id").eq("phone", phone).execute()
         if existing_phone.data:
             return jsonify({"success": False, "message": "This phone number is already registered. Each participant can only register once."}), 400
     except Exception as e:
-        print(f"⚠️ Error checking phone: {e}")
-        return jsonify({"success": False, "message": "Database error"}), 500
+        print(f"⚠️ Phone pre-check failed, continuing to insert: {e}")
 
     # Insert new user
     now = datetime.now(timezone.utc).isoformat()
